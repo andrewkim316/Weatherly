@@ -1,0 +1,17 @@
+{
+    "manifest_version": 2,
+    "name": "Weatherly",
+    "description": "Accurate, hourly weather, cross-checked with multiple sources.",
+    "version": "1",
+    "author": "Andrew Kim",
+
+    "browser_action": {
+        "default_title": "Have a good day"
+    },
+
+    "chrome_url_overrides": {
+        "newtab": "newtab.html"
+    },
+
+    "permissions": ["activeTab"]
+}
