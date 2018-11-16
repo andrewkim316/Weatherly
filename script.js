@@ -1,37 +1,28 @@
-//var address = $('#location').val();
-var loc_key = "AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok";
-
-var loc_api;
-var temp;
 function get_location(){
-    loc_api = "https://maps.googleapis.com/maps/api/geocode/json?${address}&key=${loc_key}";
-    temp = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok";
-    //"https://maps.googleapis.com/maps/api/geocode/json?" + $.param(loc_insert);
-    fetch(temp)
-    .then((resp) => resp.json())
+    let address =  format($('#location').val());
+    let loc_key = "AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok";
+    let loc_api = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${loc_key}`;
+    window.alert(loc_api);
+    fetch(loc_api)
+    .then(resp => resp.json())
     .then(function(data){
-        let loc = data.results;
-        let lat = loc.geometry.location.lat;
-        let lng = loc.geometry.location.lng;
-        //window.alert(lat,lng);
-        return lat;
+        let lo = data.results
+        lo.map(function(lo){
+            window.alert(lo.geometry.location.lat);
+        });
     })
     .catch(function(error){
         window.alert(error);
     });
 }
 
+function format(str){
+    return str.trim().replace(/ /g,"+");
+}
+
 function get_location_2(){
-    fetch("https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok")
-    .then((resp) => resp.json())
-    .then(function(data){
-        let lo = data.results.formatted_address;
-        //let lng = loc.geometry.location.lng;
-        return lo;
-    })
-    .catch(function(error){
-        window.alert(error);
-    });
+    address = format($('#location').val());
+    window.alert(`hi, just wanted to say ${address}`);
 }
 
 
