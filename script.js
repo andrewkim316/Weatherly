@@ -29,3 +29,9 @@ function get_location_2(){
 var weather_key = "9d4a8a0a8a93353a50b4ee741386d97b";
 
 var weather_api = "https://api.darksky.net/forecast/";
+
+var input = document.getElementById("location");
+var options = {
+    types: ['address']
+};
+var autocomplete = new google.maps.places.Autocomplete(input,options);
