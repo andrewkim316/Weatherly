@@ -1,7 +1,12 @@
-html, body {
-    height: 100%;
+html{
+    height: 300px;
+    width: 275px;
     margin: 0;
     padding: 0;
+}
+
+html::-webkit-scrollbar{
+    display:none;
 }
 
 #infowindow-content .title {
@@ -13,34 +18,29 @@ html, body {
 }
 
 .pac-card {
-    position: fixed;
+    /*position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1000px;
+    transform: translate(-50%, -50%);*/
     box-sizing: border-box;
     -moz-box-sizing: border-box;
-    box-shadow: 0 2px 6px rgba(59, 53, 59, 0.938);
-    background-color: rgba(119, 119, 119, 0.9);
     font-family: Fjord One;
 }
   
 #pac-container {
-    padding: 10px;
-    width: 500px;
-    margin-left:auto;
-    margin-right:auto;
+    width: 250px;
+    margin: auto;
 }
 
 #pac-input {
     background-color: rgba(172, 172, 172, 0.9);
     text-align: center;
     font-family: Fjord One;
-    font-size: 25px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 100;
     text-overflow: ellipsis;
-    height: 30px;
-    width: 500px;
+    height: 16px;
+    width: 250px;
 }
   
 #pac-input:focus {
