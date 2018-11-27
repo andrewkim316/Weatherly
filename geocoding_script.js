@@ -54,42 +54,55 @@ function initMap() {
         get_weather_AX();
     });
 }
-
+var weather_DS = ["DS"];
 function get_weather_DS(){
     let weather_key = "ff6d13b6d6cee611e239f461eb2736ae";
     let weather_api = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${weather_key}/${lat},${lng}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        window.alert(data.daily.summary);
+        weather_DS.push(data.currently.temperature);
+        weather_DS.push(data.currently.summary);
+        window.alert(weather_DS.toString());
     })
     .catch(function(error){
         window.alert(error);
     });
 }
 
+var weather_OWM = ["OWM"];
 function get_weather_OWM(){
     let weather_key = "5fbbd0cd9f2f29b404271d70b5214dc9";
     let weather_api = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&APPID=${weather_key}`
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        window.alert((data.main.temp)-273);
+        weather_OWM.push(FtoC((data.main.temp)-273));
+        weather_OWM.push(data.weather[0].main);
+        window.alert(weather_OWM.toString());
     })
     .catch(function(error){
         window.alert(error);
     });
 }
 
+var weather_AX = ["AX"];
 function get_weather_AX(){
     let weather_key = "818262a4594b42b4b6775243182011";
     let weather_api = `http://api.apixu.com/v1/current.json?key=${weather_key}&q=${lat},${lng}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        window.alert(data.current.temp_f);
+        weather_AX.push(data.current.temp_f);
+        weather_AX.push(data.current.condition.text);
+        window.alert(weather_AX.toString());
     })
     .catch(function(error){
         window.alert(error);
     });
+}
+
+function FtoC(t,b){
+    if(b) return (t-32) * (5/9);
+    return (t * (9/5)) + 32;
 }
