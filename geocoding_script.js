@@ -54,15 +54,20 @@ function initMap() {
         get_weather_AX();
     });
 }
+
 var weather_DS = ["DS"];
+var high_low;
+var forecast_len = 5;
 function get_weather_DS(){
     let weather_key = "***REMOVED***";
     let weather_api = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${weather_key}/${lat},${lng}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        weather_DS.push(data.currently.temperature);
-        weather_DS.push(data.currently.summary);
+        for(i=0;i<forecast_len;i++){
+            high_low = [data.daily.data[i].temperatureHigh,data.daily.data[i].temperatureLow];
+            weather_DS.push(high_low);
+        }
         window.alert(weather_DS.toString());
     })
     .catch(function(error){
@@ -73,12 +78,14 @@ function get_weather_DS(){
 var weather_OWM = ["OWM"];
 function get_weather_OWM(){
     let weather_key = "***REMOVED***";
-    let weather_api = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&APPID=${weather_key}`
+    let weather_api = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&APPID=${weather_key}`
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        weather_OWM.push(FtoC((data.main.temp)-273));
-        weather_OWM.push(data.weather[0].main);
+        for(i=0;i<forecast_len;i++){
+            high_low = [FtoC((data.list[i].main.temp_max)-273,false),FtoC((data.list[i].main.temp_min)-273,false)];
+            weather_OWM.push(high_low);
+        }
         window.alert(weather_OWM.toString());
     })
     .catch(function(error){
@@ -89,12 +96,14 @@ function get_weather_OWM(){
 var weather_AX = ["AX"];
 function get_weather_AX(){
     let weather_key = "***REMOVED***";
-    let weather_api = `http://api.apixu.com/v1/current.json?key=${weather_key}&q=${lat},${lng}`;
+    let weather_api = `http://api.apixu.com/v1/forecast.json?key=${weather_key}&q=${lat},${lng}&days=${forecast_len}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        weather_AX.push(data.current.temp_f);
-        weather_AX.push(data.current.condition.text);
+        for(i=0;i<forecast_len;i++){
+            high_low = [data.forecast.forecastday[i].day.maxtemp_f,data.forecast.forecastday[i].day.mintemp_f];
+            weather_AX.push(high_low);
+        }
         window.alert(weather_AX.toString());
     })
     .catch(function(error){
