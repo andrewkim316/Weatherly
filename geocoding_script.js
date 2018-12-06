@@ -52,6 +52,7 @@ function initMap() {
         get_weather_DS();
         get_weather_OWM();
         get_weather_AX();
+        write_to_page();
     });
 }
 
@@ -114,4 +115,8 @@ function get_weather_AX(){
 function FtoC(t,b){
     if(b) return (t-32) * (5/9);
     return (t * (9/5)) + 32;
+}
+
+function write_to_page(){
+    
 }
