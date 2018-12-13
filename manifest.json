@@ -4,9 +4,13 @@
     "description": "Accurate, hourly weather, cross-checked with multiple sources.",
     "version": "1",
     "author": "Andrew Kim",
-    "permissions": ["activeTab"],
+    "permissions": ["activeTab","declarativeContent"],
     "page_action": {
-        "default_popup": "Weatherly.html"
+        "default_popup": "weatherly_title.html"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
     },
     "content_security_policy": "script-src 'self' https://maps.googleapis.com; object-src 'self'"
 }

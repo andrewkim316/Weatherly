@@ -1,6 +1,6 @@
 html{
-    height: 300px;
-    width: 275px;
+    height: 400px;
+    width: 500px;
     margin: 0;
     padding: 0;
 }
@@ -18,19 +18,19 @@ html::-webkit-scrollbar{
 }
 
 .pac-card {
-    /*position: fixed;
-    top: 50%;
+    position: fixed;
+    top: 35%;
     left: 50%;
-    transform: translate(-50%, -50%);*/
+    transform: translate(-50%, -50%);
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     font-family: Fjord One;
 }
   
-#pac-container {
+/*#pac-container {
     width: 250px;
     margin: auto;
-}
+}*/
 
 #pac-input {
     background-color: rgba(172, 172, 172, 0.9);
@@ -40,9 +40,16 @@ html::-webkit-scrollbar{
     font-weight: 100;
     text-overflow: ellipsis;
     height: 16px;
-    width: 250px;
+    width: 400px;
 }
   
 #pac-input:focus {
     border-color: #4d90fe;
+}
+
+#weatherly_banner_title {
+    text-align: center;
+    font-size: 48px;
+    font-weight: 100;
+    font-family: Fjord One;
 }
