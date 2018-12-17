@@ -1,9 +1,15 @@
 html{
     height: 400px;
-    width: 500px;
+    width: var(--element_width);
     margin: 0;
     padding: 0;
     font-family: Fjord One;
+}
+:root{
+    --secondRow_height: 175px;
+    --weatherBlock_width: 100px;
+    --shadowing: inset 0 0 10px #000000;
+    --element_width: 500px;
 }
 
 .today_banner{
@@ -11,11 +17,9 @@ html{
 }
 .API_title{
     font-size:11px;
-    font-weight: 100;
 }
 .API_weather{
     font-size:15px;
-    font-weight: 100;
 }
 .API_data{
     display: flex;
@@ -28,40 +32,83 @@ html{
 }
 .today_name{
     font-size: 16px;
-    font-weight: 100;
     text-align:center;
 }
 .combined_weather{
     font-size: 40px;
-    font-weight: 100;
     text-align:center;
 }
 .hourly_temp{
-    font-size: 13px;
-    font-weight: 100;
-    padding: 0px 0px 0px 50px;
+    font-size: 20px;
+    width: var(--weatherBlock_width);
+    height: 13px;
 }
 .hourly_img_icon{
-    width:13px;
-    height:13px;
-    padding: 0px 50px 0px 50px;
+    width:50px;
+    height:50px;
 }
 .hourly_time{
-    font-size: 13px;
-    font-weight: 100;
-    padding: 0px 50px 0px 0px;
+    font-size: 15px;
+    width: var(--weatherBlock_width);
+    height:13px;
 }
 .hourly_blocks{
-    display:flex;
+    text-align: center;
+    border-right:solid;
 }
+.hourly_img{
+    width:var(--weatherBlock_width);
+}
+.hourly{
+    overflow:scroll;
+    overflow-y:hidden;
+    height: var(--secondRow_height);
+    width: 350px;
+    display:flex;
+    box-shadow:var(--shadowing);
+}
+.last_block{
+    border-right: none;
+    border-bottom: none;
+}
+.date_selection{
+    height: var(--secondRow_height);
+    box-shadow: var(--shadowing);
+    width: calc(var(--element_width) - 350px);
+}
+.dateSelection_date{
+    font-size: 15px;
+    text-align: center;
+    width: 75px;
+}
+.dateSelection_info{
+    font-size: 13px;
+    text-align: right;
+    width: 75px;
+}
+.date_blocks{
+    display:flex;
+    height: calc(var(--secondRow_height) /  5);
+}
+.forecast_data{
+    display: flex;
+}
+
 
 #icon_licensing_text{
     font-size: 10px;
-    font-weight: 100;
 }
 
 #weather_icon_img{
     height: 150px;
     width: 150px;
-    padding: 10px;
+    padding: 20px;
+}
+
+::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
 }
