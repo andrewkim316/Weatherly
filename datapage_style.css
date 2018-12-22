@@ -89,6 +89,8 @@ html{
 .date_blocks{
     display:flex;
     height: calc(var(--secondRow_height) /  5);
+    width: calc(var(--element_width)-350px);
+    border-bottom:solid;
 }
 .forecast_data{
     display: flex;

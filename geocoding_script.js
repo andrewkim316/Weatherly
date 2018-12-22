@@ -56,56 +56,85 @@ function initMap() {
     });
 }
 
-var weather_DS = ["DS"];
+var current_weather = [,,];
+var dayForecast_DS = ["DS"];
+var hourForecast_DS = [];
+var dayForecastSymbol_DS = [];
+var hourForecastSymbol_DS = ["DS"];
+
 var high_low;
-var forecast_len = 5;
+var forecastDay_len = 5;
+var forecastHour_len = 6;
+
 function get_weather_DS(){
     let weather_key = "***REMOVED***";
     let weather_api = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${weather_key}/${lat},${lng}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        for(i=0;i<forecast_len;i++){
-            high_low = [data.daily.data[i].temperatureHigh,data.daily.data[i].temperatureLow];
-            weather_DS.push(high_low);
+        for(i=0;i<forecastDay_len;i++){
+            high_low = [data.daily.data[i].temperatureHigh,data.daily.data[i].temperatureLow]; 
+            dayForecast_DS.push(high_low);
+            dayForecastSymbol_DS.push(data.daily.data[i].icon);
         }
-        window.alert(weather_DS.toString());
+
+        for(j=0;j<forecastHour_len;j++){
+            hourForecast_DS.push(data.hourly.data[j].temperature);
+            hourForecastSymbol_DS.push(data.hourly.data[j].icon);
+        }
+        current_weather[0] = data.currently.temperature;
+        window.alert(hourForecastSymbol_DS.toString());
     })
     .catch(function(error){
         window.alert(error);
     });
 }
 
-var weather_OWM = ["OWM"];
+var dayForecast_OWM = ["OWM"];
+var hourForecast_OWM = [];
+var dayForecastSymbol_OWM = [];
+var hourForecastSymbol_OWM = ["OWM"];
+
 function get_weather_OWM(){
     let weather_key = "***REMOVED***";
     let weather_api = `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&APPID=${weather_key}`
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        for(i=0;i<forecast_len;i++){
-            high_low = [FtoC((data.list[i].main.temp_max)-273,false),FtoC((data.list[i].main.temp_min)-273,false)];
-            weather_OWM.push(high_low);
+        for(i=0;i<forecastDay_len;i++){
+            high_low = [FtoC((data.list[i*8].main.temp_max)-273,false),FtoC((data.list[i*8].main.temp_min)-273,false)];
+            dayForecast_OWM.push(high_low);
+            dayForecastSymbol_OWM.push(data.list[i*8].weather[0].main);
         }
-        window.alert(weather_OWM.toString());
+        for(j=0;j<(forecastHour_len/3);j++){
+            hourForecast_OWM.push(FtoC((data.list[j].main.temp)-273,false));
+            hourForecastSymbol_OWM.push(data.list[j].weather[0].main);
+        }
+        current_weather[1] = FtoC((data.list[0].main.temp)-273,false);
+        window.alert(hourForecastSymbol_OWM.toString());
     })
     .catch(function(error){
         window.alert(error);
     });
 }
 
-var weather_AX = ["AX"];
+var dayForecast_AX = ["AX"];
+//var hourForecast_AX = [];
+var dayForecastSymbol_AX = [];
+//var hourForecastSymbol_AX = ["AX"];
+
 function get_weather_AX(){
     let weather_key = "***REMOVED***";
-    let weather_api = `http://api.apixu.com/v1/forecast.json?key=${weather_key}&q=${lat},${lng}&days=${forecast_len}`;
+    let weather_api = `http://api.apixu.com/v1/forecast.json?key=${weather_key}&q=${lat},${lng}&days=${forecastDay_len}`;
     fetch(weather_api)
     .then(resp => resp.json())
     .then(function(data){
-        for(i=0;i<forecast_len;i++){
+        for(i=0;i<forecastDay_len;i++){
             high_low = [data.forecast.forecastday[i].day.maxtemp_f,data.forecast.forecastday[i].day.mintemp_f];
-            weather_AX.push(high_low);
+            dayForecast_AX.push(high_low);
+            dayForecastSymbol_AX.push(data.forecast.forecastday[i].day.condition.text);
         }
-        window.alert(weather_AX.toString());
+        window.alert(dayForecastSymbol_AX.toString());
     })
     .catch(function(error){
         window.alert(error);
@@ -119,4 +148,10 @@ function FtoC(t,b){
 
 function write_to_page(){
     
+}
+
+function iconHandler(arr,src){
+    if(src=="DS"){
+        
+    }
 }
