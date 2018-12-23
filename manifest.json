@@ -6,7 +6,7 @@
     "author": "Andrew Kim",
     "permissions": ["activeTab","declarativeContent"],
     "page_action": {
-        "default_popup": "weatherly_datapage.html"
+        "default_popup": "weatherly_title.html"
     },
     "background": {
         "scripts": ["background.js"],
