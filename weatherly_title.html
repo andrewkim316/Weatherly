@@ -3,23 +3,218 @@
     <head>
         <title>weatherly_title</title>
         <link rel="stylesheet" type="text/css" href="title_style.css"/>
+        <link rel="stylesheet" type="text/css" href="datapage_style.css"/>
         <link href='https://fonts.googleapis.com/css?family=Fjord One' rel='stylesheet'/>
     </head>
     <body>
-        <div class="pac-card" id="pac-card">
-            <p id="weatherly_banner_title">weatherly</p>
-            <input id="pac-input" type="text" placeholder="Enter a location">
+        <!-- Empty containers -->
+        <div id="title">
+            <div class="pac-card" id="pac-card">
+                <p id="weatherly_banner_title">weatherly</p>
+                <input id="pac-input" type="text" placeholder="Enter a location">
+            </div>
+    
+            <div id="map"></div>
+            
+            <div id="infowindow-content">
+                <img src="" width="16" height="16" id="place-icon">
+                <span id="place-name"  class="title"></span><br>
+                <span id="place-address"></span>
+            </div>
         </div>
 
-        <div id="map"></div>
-        
-        <div id="infowindow-content">
-            <img src="" width="16" height="16" id="place-icon">
-            <span id="place-name"  class="title"></span><br>
-            <span id="place-address"></span>
+        <div id="datapage">
         </div>
+
+        <!--
+            SCRIPTS
+        -->
         <!-- Replace the value of the key parameter with your own API key. -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok&libraries=places&callback=initMap" async defer></script>
+        
+        <!-- Title page script -->
+        <script id="title_script" type="text/html">
+        </script>
+
+        <!-- Datapage Script -->
+        <script id="datapage_script" type="text/html">
+            <div class="today_banner">
+                <div id="weather_icon">
+                    <img id="weather_icon_img" src="038-cloudy-3.png"/>
+                </div>
+                <div class="weather_data">
+                    <div class="API_data">
+                        <div id="Dark_Sky" class="API_blocks">
+                            <p id="DS_title" class="API_title">Dark Sky</p>
+                            <p id="DS_weather" class="API_weather">30&#x2109</p>
+                        </div>
+                        <div id="Weather_Map" class="API_blocks">
+                            <p id="WM_title" class="API_title">Weather Map</p>
+                            <p id="WM_weather" class="API_weather">32&#x2109</p>
+                        </div>
+                        <div id="Apixu" class="API_blocks">
+                            <p id="AX_title" class="API_title">Apixu</p>
+                            <p id="AX_weather" class="API_weather">28&#x2109</p>
+                        </div>
+                    </div>
+                    <div class="combined_weather">
+                        <p>30&#x2109</p>
+                    </div>
+                </div>
+            </div>
+            <div class="today_name">
+                <p>Right Now</p>
+            </div>
+            <div class="forecast_data">
+                <div class="hourly">
+                    <div id="hourly0" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time0">
+                            <p>12PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img0">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp0">
+                            <p></p>
+                        </div>
+                    </div>
+                    <div id="hourly1" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time1">
+                            <p>1PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img1">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp1">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="hourly2" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time2">
+                            <p>2PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img2">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp2">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="hourly3" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time3">
+                            <p>3PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img3">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp3">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="hourly4" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time4">
+                            <p>4PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img4">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp4">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="hourly5" class="hourly_blocks">
+                        <div class="hourly_time" id="hourly_time5">
+                            <p>5PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img5">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp5">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="hourly6" class="hourly_blocks last_block">
+                        <div class="hourly_time" id="hourly_time6">
+                            <p>6PM</p>
+                        </div>
+                        <div class="hourly_img" id="hourly_img6">
+                            <p>
+                                <img class="hourly_img_icon" src="038-cloudy-3.png"/>
+                            </p>
+                        </div>
+                        <div class="hourly_temp" id="hourly_temp6">
+                            <p>30&#x2109</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="date_selection">
+                    <div id="date0" class="date_blocks">
+                        <div class="dateSelection_date">
+                            <p>Today</p>
+                        </div>
+                        <div class="dateSelection_info">
+                            <p>20/17&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="date1" class="date_blocks">
+                        <div class="dateSelection_date">
+                            <p>Dec. 26</p>
+                        </div>
+                        <div class="dateSelection_info">
+                            <p>20/17&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="date2" class="date_blocks">
+                        <div class="dateSelection_date">
+                            <p>Dec. 27</p>
+                        </div>
+                        <div class="dateSelection_info">
+                            <p>20/17&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="date3" class="date_blocks">
+                        <div class="dateSelection_date">
+                            <p>Dec. 28</p>
+                        </div>
+                        <div class="dateSelection_info">
+                            <p>20/17&#x2109</p>
+                        </div>
+                    </div>
+                    <div id="date4" class="date_blocks">
+                        <div class="dateSelection_date">
+                            <p>Dec. 29</p>
+                        </div>
+                        <div class="dateSelection_info">
+                            <p>20/17&#x2109</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div id="icon_licensing">
+                <p id="icon_licensing_text">
+                    Icons made by 
+                    <a href="https://www.flaticon.com/packs/weather-161" title="iconixar">iconixar</a> 
+                        from 
+                    <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+                        is licensed by 
+                    <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                </p>
+            </div>
+        </script>
         <script src="geocoding_script.js"></script>
         <script src="jquery-3.3.1.js"></script>
     </body>
