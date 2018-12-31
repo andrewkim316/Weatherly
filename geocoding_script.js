@@ -108,11 +108,16 @@ var agg_forecast = {
         "symbol": [],
     },
     "hour":{
-        "len": 6,
+        "len": 7,
         "weather": [],
         "symbol": [],
     },
-    "current":[,,],
+    "current":{
+        "DS": 0,
+        "OWM": 0,
+        "AX": 0,
+        "time": 0,
+    },
 }
 var weather_key_DS = "ff6d13b6d6cee611e239f461eb2736ae";
 var weather_key_OWM = "5fbbd0cd9f2f29b404271d70b5214dc9";
@@ -126,9 +131,20 @@ function FtoC(t,b){
 
 function write_to_page(){
     for(i = 0; i < agg_forecast.hour.len; i++){
-        let hourlyTemp = document.getElementById("hourly_temp"+i.toString());
-        hourlyTemp.innerHTML = hourForecast[i].toString() + "&#x2109";
+        document.getElementById("hourly_temp"+i.toString()).innerHTML = agg_forecast.hour.weather[i].toString() + "&#x2109";
+        document.getElementById("hourly_img"+i.toString()).src = `${weather_icons[agg_forecast.hour.symbol[i]]}`;
+        let temp_time = parseInt(new Date(agg_forecast.current.time).getHours()) + i;
+        document.getElementById("hourly_time"+i.toString()).innerHTML =  (temp_time%12).toString() + (parseInt(temp_time/12) ? "PM":"AM");
     }
+    for(j = 0; j < agg_forecast.day.len; j++){
+        document.getElementById("day_temp"+j.toString()).innerHTML = agg_forecast.day.weather[j][0].toString() + "/" + agg_forecast.day.weather[j][1].toString() + "&#x2109";
+        document.getElementById("day_date"+j.toString()).innerHTML = get_date(new Date(agg_forecast.current.time + (j*86000*1000)));
+    }
+
+    document.getElementById("DS_weather").innerHTML = agg_forecast.current.DS + "&#x2109";
+    document.getElementById("OWM_weather").innerHTML = agg_forecast.current.OWM + "&#x2109";
+    document.getElementById("AX_weather").innerHTML = agg_forecast.current.AX + "&#x2109";
+    document.getElementById("combined_weather_weather").innerHTML = weather_math(agg_forecast.current.DS,agg_forecast.current.OWM,agg_forecast.current.AX) + "&#x2109";
 }
 
 /* Determines the weather icon needed from Apixu and Open Weather Map */
@@ -246,9 +262,9 @@ function weatherHandler(arrDS,arrOWM,arrAX,daily){
     var final_temp = [];
     if(!daily){
         for(i = 0; i < agg_forecast.hour.len; i++){
-            let temp = parseInt(arrDS[i]);
+            let temp = parseFloat(arrDS[i]);
             if(i % 3 == 0) {
-                temp += parseInt(arrOWM[i%3]);
+                temp += parseFloat(arrOWM[i%3]);
                 final_temp.push((temp/2.0).toFixed(1));
             }
             else final_temp.push(temp.toFixed(1));
@@ -256,7 +272,8 @@ function weatherHandler(arrDS,arrOWM,arrAX,daily){
     }
     else if(daily){
         for(i = 0; i < agg_forecast.day.len; i++){
-            final_temp.push(((parseInt(arrDS[i])+parseInt(arrOWM[i])+parseInt(arrAX[i]))/3.0).toFixed(1));
+            high_low = [((parseInt(arrDS[i][0])+parseInt(arrOWM[i][0])+parseInt(arrAX[i][0]))/3.0).toFixed(1),((parseInt(arrDS[i][1])+parseInt(arrOWM[i][1])+parseInt(arrAX[i][1]))/3.0).toFixed(1)];
+            final_temp.push(high_low);
         }
     }
     return final_temp;
@@ -289,6 +306,7 @@ function get_weather(){
             high_low = [data[0].daily.data[i].temperatureHigh,data[0].daily.data[i].temperatureLow]; 
             forecast.DS.day.weather.push(high_low);
             forecast.DS.day.symbol.push(data[0].daily.data[i].icon);
+            agg_forecast.current.time = data[0].currently.time * 1000;
 
             high_low = [FtoC((data[1].list[i*8].main.temp_max)-273,false),FtoC((data[1].list[i*8].main.temp_min)-273,false)];
             forecast.OWM.day.weather.push(high_low);
@@ -306,15 +324,66 @@ function get_weather(){
                 forecast.OWM.hour.weather.push(FtoC((data[1].list[j].main.temp)-273,false));
             }
         }
-        agg_forecast.current[0] = data[0].currently.temperature;
-        agg_forecast.current[1] = FtoC((data[1].list[0].main.temp)-273,false);
+
+        agg_forecast.current.DS = data[0].currently.temperature.toFixed(1);
+        agg_forecast.current.OWM = FtoC((data[1].list[0].main.temp)-273,false).toFixed(1);
+        agg_forecast.current.AX = data[2].current.temp_f.toFixed(1);
         
         agg_forecast.day.symbol = iconHandler(forecast.DS.day.symbol, forecast.OWM.day.symbol, forecast.AX.day.symbol, true);
         agg_forecast.hour.symbol = iconHandler(forecast.DS.hour.symbol,[],[],false);
         agg_forecast.day.weather = weatherHandler(forecast.DS.day.weather,forecast.OWM.day.weather,forecast.AX.day.weather,true);
         agg_forecast.hour.weather = weatherHandler(forecast.DS.hour.weather,forecast.OWM.hour.weather,[],false);
+
+        write_to_page();
     })
     .catch(err => {
         window.alert(err);
     })
+}
+
+function weather_math(DS,OWM,AX){
+    return ((parseFloat(DS) + parseFloat(OWM) + parseFloat(AX))/3).toFixed(1);
+}
+
+function get_date(t){
+    var temp_month;
+    switch(t.getMonth()){
+        case 0:
+            temp_month = "January";
+            break;
+        case 1:
+            temp_month = "February";
+            break;
+        case 2:
+            temp_month = "March";
+            break;  
+        case 3:
+            temp_month = "April";
+            break;
+        case 4:
+            temp_month = "May";
+            break;
+        case 5:
+            temp_month = "June";
+            break;
+        case 6:
+            temp_month = "July";
+            break;
+        case 7:
+            temp_month = "August";
+            break;
+        case 8:
+            temp_month = "September";
+            break;
+        case 9:
+            temp_month = "October";
+            break;
+        case 10:
+            temp_month = "November";
+            break;
+        case 11:
+            temp_month = "December";
+            break;
+    }
+    return temp_month.substring(0,3) + ". " + t.getDate()
 }

@@ -1,22 +1,113 @@
+/*
+    Definitions and variables for the whole app
+*/
 html{
     height: 400px;
-    width: 500px;
+    width: var(--element_width);
     margin: 0;
     padding: 0;
+    font-family: Fjord One;
 }
-
+:root{
+    --secondRow_height: 175px;
+    --weatherBlock_width: 100px;
+    --shadowing: inset 0 0 10px #000000;
+    --element_width: 500px;
+}
 html::-webkit-scrollbar{
     display:none;
 }
 
-#infowindow-content .title {
-    font-weight: bold;
+/*
+    Classes
+*/
+/* Container for the whole top banner and subsequent sub-blocks*/
+.today_banner{
+    display:flex;
 }
-  
-#infowindow-content {
-    display: none;
+.API_title{
+    font-size:11px;
 }
-
+.API_weather{
+    font-size:15px;
+}
+.API_data{
+    display: flex;
+}
+.API_blocks{
+    padding: 0px 10px 0px 10px;
+    width:70px;
+    text-align: center;
+    top:0%;
+}
+/* Container for the mid-banner that contains the current date/time */
+.today_name{
+    font-size: 16px;
+    text-align:center;
+}
+/* Container for the bottom section of the datapage (hourly and date forecast) */
+.forecast_data{
+    display: flex;
+}
+/* Container for the hourly blocks in the scoll menu on the bottom left and subsequent sub-blocks */
+.hourly_blocks{
+    text-align: center;
+    border-right:solid;
+}
+.hourly_temp{
+    font-size: 20px;
+    width: var(--weatherBlock_width);
+    height: 13px;
+}
+.hourly_img_icon{
+    width:50px;
+    height:50px;
+}
+.hourly_time{
+    font-size: 15px;
+    width: var(--weatherBlock_width);
+    height:13px;
+}
+.hourly_img{
+    width:var(--weatherBlock_width);
+}
+/* Definitions for the hourly blocks */
+.hourly{
+    overflow:scroll;
+    overflow-y:hidden;
+    height: var(--secondRow_height);
+    width: 350px;
+    display:flex;
+    box-shadow:var(--shadowing);
+}
+/* Defines special properties for the last block of a list */
+.last_block{
+    border-right: none;
+    border-bottom: none;
+}
+/* Container of the date blocks and subsequent sub-blocks */
+.date_blocks{
+    display:flex;
+    height: calc(var(--secondRow_height) /  5);
+    width: calc(var(--element_width)-350px);
+    border-bottom:solid;
+}
+.date_selection{
+    height: var(--secondRow_height);
+    box-shadow: var(--shadowing);
+    width: calc(var(--element_width) - 350px);
+}
+.dateSelection_date{
+    font-size: 15px;
+    text-align: center;
+    width: 75px;
+}
+.dateSelection_info{
+    font-size: 13px;
+    text-align: right;
+    width: 75px;
+}
+/* Definitions for the title screen block */
 .pac-card {
     position: fixed;
     top: 35%;
@@ -26,12 +117,41 @@ html::-webkit-scrollbar{
     -moz-box-sizing: border-box;
     font-family: Fjord One;
 }
-  
-/*#pac-container {
-    width: 250px;
-    margin: auto;
-}*/
 
+/* 
+    IDs
+*/
+/* Text of the combined weather forecast, or the presented main forecast */
+#combined_weather_weather{
+    font-size: 40px;
+    text-align:center;
+}
+/* Text for icon licensing */
+#icon_licensing_text{
+    font-size: 10px;
+}
+/* Main icon image */
+#weather_icon_img{
+    height: 150px;
+    width: 150px;
+    padding: 20px;
+}
+/* Scrollbar for the bottom left hourly data */
+::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+/* Text for the autofill content */
+#infowindow-content .title {
+    font-weight: bold;
+}
+#infowindow-content {
+    display: none;
+}
+/* Definitions for the input styling on the first page */
 #pac-input {
     background-color: rgba(172, 172, 172, 0.9);
     text-align: center;
@@ -41,12 +161,11 @@ html::-webkit-scrollbar{
     text-overflow: ellipsis;
     height: 16px;
     width: 400px;
-}
-  
+} 
 #pac-input:focus {
     border-color: #4d90fe;
 }
-
+/* Definitions for the "weatherly" text on the title */
 #weatherly_banner_title {
     text-align: center;
     font-size: 48px;
