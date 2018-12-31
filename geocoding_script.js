@@ -15,10 +15,64 @@ var weather_icons = {
     "partly-cloudy-day": "https://s3.amazonaws.com/weatherly-images/038-cloudy-3.png",
     "partly-cloudy-night": "https://s3.amazonaws.com/weatherly-images/007-night.png"
 }
+// JSON object to store all the rectified combined data
+var agg_forecast = {
+    "day":{
+        "len": 5,
+        "weather": [],
+        "symbol": [],
+    },
+    "hour":{
+        "len": 7,
+        "weather": [],
+        "symbol": [],
+    },
+    "current":{
+        "DS": 0,
+        "OWM": 0,
+        "AX": 0,
+        "time": 0,
+    },
+}
+// JSON object containing all individual API data
+var forecast = {
+    "DS":{
+        "day":{
+            "weather":[],
+            "symbol": [],
+        },
+        "hour":{
+            "weather":[],
+            "symbol":[],
+        }
+    },
+    "OWM":{
+        "day":{
+            "weather":[],
+            "symbol": [],
+        },
+        "hour":{
+            "weather":[],
+        }
+    },
+    "AX":{
+        "day":{
+            "weather": [],
+            "symbol": [],
+        },
+    },
+}
+/* API keys for the 3 APIs */
+var weather_key_DS = "ff6d13b6d6cee611e239f461eb2736ae";
+var weather_key_OWM = "5fbbd0cd9f2f29b404271d70b5214dc9";
+var weather_key_AX = "818262a4594b42b4b6775243182011";
+
+/* --------------------------------------------------------------------------- */
 
 /*
-    Implements the Google autofill mechanism
+    Main Functions
 */
+// Implements the Google autofill mechanic and returns a Google location object
 function initMap() {
     let loc_key = "AIzaSyDpwMVJ17sATb5xIvGn1Yx5xnXzkBoKVok";
     var map = new google.maps.Map(document.getElementById('map'));
@@ -71,82 +125,62 @@ function initMap() {
         get_weather();
     });
 }
+// Gets the weather from the 3 APIs and fills out the data onto the datapage
+function get_weather(){
+    let weather_apis = [
+        `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${weather_key_DS}/${lat},${lng}`,
+        `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&APPID=${weather_key_OWM}`,
+        `http://api.apixu.com/v1/forecast.json?key=${weather_key_AX}&q=${lat},${lng}&days=${agg_forecast.day.len}`
+    ];
+    Promise.all(weather_apis.map(api => fetch(api)))
+    .then(responses => Promise.all(responses.map(resp => resp.json())))
+    .then(data => {
+        for(i = 0; i < agg_forecast.day.len; i++){
+            forecast.DS.day.weather.push([data[0].daily.data[i].temperatureHigh,data[0].daily.data[i].temperatureLow]);
+            forecast.DS.day.symbol.push(data[0].daily.data[i].icon);
+            agg_forecast.current.time = data[0].currently.time * 1000;
 
-/* Variables for all three API accessor functions */
-var forecast = {
-    "DS":{
-        "day":{
-            "weather":[],
-            "symbol": [],
-        },
-        "hour":{
-            "weather":[],
-            "symbol":[],
-        }
-    },
-    "OWM":{
-        "day":{
-            "weather":[],
-            "symbol": [],
-        },
-        "hour":{
-            "weather":[],
-        }
-    },
-    "AX":{
-        "day":{
-            "weather": [],
-            "symbol": [],
-        },
-    },
-}
-var high_low;
-var agg_forecast = {
-    "day":{
-        "len": 5,
-        "weather": [],
-        "symbol": [],
-    },
-    "hour":{
-        "len": 7,
-        "weather": [],
-        "symbol": [],
-    },
-    "current":{
-        "DS": 0,
-        "OWM": 0,
-        "AX": 0,
-        "time": 0,
-    },
-}
-var weather_key_DS = "ff6d13b6d6cee611e239f461eb2736ae";
-var weather_key_OWM = "5fbbd0cd9f2f29b404271d70b5214dc9";
-var weather_key_AX = "818262a4594b42b4b6775243182011";
+            forecast.OWM.day.weather.push([FtoC((data[1].list[i*8].main.temp_max)-273,false),FtoC((data[1].list[i*8].main.temp_min)-273,false)]);
+            forecast.OWM.day.symbol.push(data[1].list[i*8].weather[0].icon);
 
-/* Convert Fahrenheit variable t to Celsius if b == true, vice versa if b == false */
+            forecast.AX.day.weather.push([data[2].forecast.forecastday[i].day.maxtemp_f,data[2].forecast.forecastday[i].day.mintemp_f]);
+            forecast.AX.day.symbol.push(data[2].forecast.forecastday[i].day.condition.icon);
+        }
+        for(j = 0; j < agg_forecast.hour.len; j++){
+            forecast.DS.hour.weather.push(data[0].hourly.data[j].temperature);
+            forecast.DS.hour.symbol.push(data[0].hourly.data[j].icon);
+
+            if(j % 3 == 0){
+                forecast.OWM.hour.weather.push(FtoC((data[1].list[j].main.temp)-273,false));
+            }
+        }
+
+        agg_forecast.current.DS = data[0].currently.temperature.toFixed(1);
+        agg_forecast.current.OWM = FtoC((data[1].list[0].main.temp)-273,false).toFixed(1);
+        agg_forecast.current.AX = data[2].current.temp_f.toFixed(1);
+        
+        agg_forecast.day.symbol = iconHandler(forecast.DS.day.symbol, forecast.OWM.day.symbol, forecast.AX.day.symbol, true);
+        agg_forecast.hour.symbol = iconHandler(forecast.DS.hour.symbol,[],[],false);
+        agg_forecast.day.weather = weatherHandler(forecast.DS.day.weather,forecast.OWM.day.weather,forecast.AX.day.weather,true);
+        agg_forecast.hour.weather = weatherHandler(forecast.DS.hour.weather,forecast.OWM.hour.weather,[],false);
+
+        write_to_page();
+    })
+    .catch(err => {
+        window.alert(err);
+    })
+}
+
+/* --------------------------------------------------------------------------- */
+
+/*
+    Helper Functions
+*/
+// Convert Fahrenheit variable t to Celsius if b == true, vice versa if b == false
 function FtoC(t,b){
     if(b) return (t-32) * (5/9);
     return (t * (9/5)) + 32;
 }
-
-function write_to_page(){
-    for(i = 0; i < agg_forecast.hour.len; i++){
-        document.getElementById("hourly_temp"+i.toString()).innerHTML = agg_forecast.hour.weather[i].toString() + "&#x2109";
-        document.getElementById("hourly_img"+i.toString()).src = `${weather_icons[agg_forecast.hour.symbol[i]]}`;
-        let temp_time = parseInt(new Date(agg_forecast.current.time).getHours()) + i;
-        document.getElementById("hourly_time"+i.toString()).innerHTML =  (temp_time%12).toString() + (parseInt(temp_time/12) ? "PM":"AM");
-    }
-    for(j = 0; j < agg_forecast.day.len; j++){
-        document.getElementById("day_temp"+j.toString()).innerHTML = agg_forecast.day.weather[j][0].toString() + "/" + agg_forecast.day.weather[j][1].toString() + "&#x2109";
-        document.getElementById("day_date"+j.toString()).innerHTML = get_date(new Date(agg_forecast.current.time + (j*86000*1000)));
-    }
-
-    document.getElementById("DS_weather").innerHTML = agg_forecast.current.DS + "&#x2109";
-    document.getElementById("OWM_weather").innerHTML = agg_forecast.current.OWM + "&#x2109";
-    document.getElementById("AX_weather").innerHTML = agg_forecast.current.AX + "&#x2109";
-    document.getElementById("combined_weather_weather").innerHTML = weather_math(agg_forecast.current.DS,agg_forecast.current.OWM,agg_forecast.current.AX) + "&#x2109";
-}
-
 /* Determines the weather icon needed from Apixu and Open Weather Map */
 function iconTranslatorAX(code){
     switch(code){
@@ -228,7 +262,7 @@ function iconTranslatorOWM(code){
             return "fog";
     }
 }
-
+// Takes in 3 different icon strings and outputs 1
 function iconHandler(arrDS,arrOWM,arrAX,daily){
     var final_icon = [];
     var icon_DS;
@@ -257,7 +291,7 @@ function iconHandler(arrDS,arrOWM,arrAX,daily){
     }
     return final_icon;
 }
-
+// Takes in 3 different weather arrays and outputs one combined weather array
 function weatherHandler(arrDS,arrOWM,arrAX,daily){
     var final_temp = [];
     if(!daily){
@@ -272,14 +306,12 @@ function weatherHandler(arrDS,arrOWM,arrAX,daily){
     }
     else if(daily){
         for(i = 0; i < agg_forecast.day.len; i++){
-            high_low = [((parseInt(arrDS[i][0])+parseInt(arrOWM[i][0])+parseInt(arrAX[i][0]))/3.0).toFixed(1),((parseInt(arrDS[i][1])+parseInt(arrOWM[i][1])+parseInt(arrAX[i][1]))/3.0).toFixed(1)];
-            final_temp.push(high_low);
+            final_temp.push([((parseInt(arrDS[i][0])+parseInt(arrOWM[i][0])+parseInt(arrAX[i][0]))/3.0).toFixed(1),((parseInt(arrDS[i][1])+parseInt(arrOWM[i][1])+parseInt(arrAX[i][1]))/3.0).toFixed(1)]);
         }
     }
     return final_temp;
 }
-
-/* Fills the empty containers */
+// Fills the empty containers on the HTML page
 function fill_container(container_name){
     var title = document.getElementById("title");
     var datapage = document.getElementById("datapage");
@@ -292,59 +324,11 @@ function fill_container(container_name){
         $("#title").empty();
     }
 }
-
-function get_weather(){
-    let weather_apis = [
-        `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${weather_key_DS}/${lat},${lng}`,
-        `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&APPID=${weather_key_OWM}`,
-        `http://api.apixu.com/v1/forecast.json?key=${weather_key_AX}&q=${lat},${lng}&days=${agg_forecast.day.len}`
-    ];
-    Promise.all(weather_apis.map(api => fetch(api)))
-    .then(responses => Promise.all(responses.map(resp => resp.json())))
-    .then(data => {
-        for(i = 0; i < agg_forecast.day.len; i++){
-            high_low = [data[0].daily.data[i].temperatureHigh,data[0].daily.data[i].temperatureLow]; 
-            forecast.DS.day.weather.push(high_low);
-            forecast.DS.day.symbol.push(data[0].daily.data[i].icon);
-            agg_forecast.current.time = data[0].currently.time * 1000;
-
-            high_low = [FtoC((data[1].list[i*8].main.temp_max)-273,false),FtoC((data[1].list[i*8].main.temp_min)-273,false)];
-            forecast.OWM.day.weather.push(high_low);
-            forecast.OWM.day.symbol.push(data[1].list[i*8].weather[0].icon);
-
-            high_low = [data[2].forecast.forecastday[i].day.maxtemp_f,data[2].forecast.forecastday[i].day.mintemp_f];
-            forecast.AX.day.weather.push(high_low);
-            forecast.AX.day.symbol.push(data[2].forecast.forecastday[i].day.condition.icon);
-        }
-        for(j = 0; j < agg_forecast.hour.len; j++){
-            forecast.DS.hour.weather.push(data[0].hourly.data[j].temperature);
-            forecast.DS.hour.symbol.push(data[0].hourly.data[j].icon);
-
-            if(j % 3 == 0){
-                forecast.OWM.hour.weather.push(FtoC((data[1].list[j].main.temp)-273,false));
-            }
-        }
-
-        agg_forecast.current.DS = data[0].currently.temperature.toFixed(1);
-        agg_forecast.current.OWM = FtoC((data[1].list[0].main.temp)-273,false).toFixed(1);
-        agg_forecast.current.AX = data[2].current.temp_f.toFixed(1);
-        
-        agg_forecast.day.symbol = iconHandler(forecast.DS.day.symbol, forecast.OWM.day.symbol, forecast.AX.day.symbol, true);
-        agg_forecast.hour.symbol = iconHandler(forecast.DS.hour.symbol,[],[],false);
-        agg_forecast.day.weather = weatherHandler(forecast.DS.day.weather,forecast.OWM.day.weather,forecast.AX.day.weather,true);
-        agg_forecast.hour.weather = weatherHandler(forecast.DS.hour.weather,forecast.OWM.hour.weather,[],false);
-
-        write_to_page();
-    })
-    .catch(err => {
-        window.alert(err);
-    })
-}
-
+// Applies a mathematical average on 3 different numbers
 function weather_math(DS,OWM,AX){
     return ((parseFloat(DS) + parseFloat(OWM) + parseFloat(AX))/3).toFixed(1);
 }
-
+// Outputs a formatted string of the date, with the input being a Date object
 function get_date(t){
     var temp_month;
     switch(t.getMonth()){
@@ -386,4 +370,22 @@ function get_date(t){
             break;
     }
     return temp_month.substring(0,3) + ". " + t.getDate()
+}
+// Writes the data to the datapage
+function write_to_page(){
+    for(i = 0; i < agg_forecast.hour.len; i++){
+        document.getElementById("hourly_temp"+i.toString()).innerHTML = agg_forecast.hour.weather[i].toString() + "&#x2109";
+        document.getElementById("hourly_img"+i.toString()).src = `${weather_icons[agg_forecast.hour.symbol[i]]}`;
+        let temp_time = parseInt(new Date(agg_forecast.current.time).getHours()) + i;
+        document.getElementById("hourly_time"+i.toString()).innerHTML =  (temp_time%12).toString() + (parseInt(temp_time/12) ? "PM":"AM");
+    }
+    for(j = 0; j < agg_forecast.day.len; j++){
+        document.getElementById("day_temp"+j.toString()).innerHTML = agg_forecast.day.weather[j][0].toString() + "/" + agg_forecast.day.weather[j][1].toString() + "&#x2109";
+        document.getElementById("day_date"+j.toString()).innerHTML = get_date(new Date(agg_forecast.current.time + (j*86000*1000)));
+    }
+
+    document.getElementById("DS_weather").innerHTML = agg_forecast.current.DS + "&#x2109";
+    document.getElementById("OWM_weather").innerHTML = agg_forecast.current.OWM + "&#x2109";
+    document.getElementById("AX_weather").innerHTML = agg_forecast.current.AX + "&#x2109";
+    document.getElementById("combined_weather_weather").innerHTML = weather_math(agg_forecast.current.DS,agg_forecast.current.OWM,agg_forecast.current.AX) + "&#x2109";
 }
