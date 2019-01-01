@@ -32,6 +32,7 @@ var agg_forecast = {
         "OWM": 0,
         "AX": 0,
         "time": 0,
+        "location":"",
     },
 }
 // JSON object containing all individual API data
@@ -83,14 +84,14 @@ function initMap() {
 
     var autocomplete = new google.maps.places.Autocomplete(input);
 
-    // Bind the map's bounds (viewport) property to the autocomplete object,
-    // so that the autocomplete requests use the current map bounds for the
-    // bounds option in the request.
+    /* Bind the map's bounds (viewport) property to the autocomplete object,
+    so that the autocomplete requests use the current map bounds for the
+    bounds option in the request. */
     autocomplete.bindTo('bounds', map);
 
     // Set the data fields to return when the user selects a place.
     autocomplete.setFields(
-        ['address_components', 'geometry', 'icon', 'name']);
+        ['address_components', 'formatted_address', 'geometry', 'icon', 'name']);
 
     var infowindow = new google.maps.InfoWindow();
     var infowindowContent = document.getElementById('infowindow-content');
@@ -100,15 +101,18 @@ function initMap() {
         infowindow.close();
         var place = autocomplete.getPlace();
         if (!place.geometry) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
+            /* User entered the name of a Place that was not suggested and 
+            pressed the Enter key, or the Place Details request failed. */
             window.alert("No details available for input: '" + place.name + "'");
             return;
         }
         else {
             lat = place.geometry.location.lat();
             lng = place.geometry.location.lng();
+            agg_forecast.current.location = place.formatted_address;
             fill_container("datapage");
+            $('html').css('background-image','none');
+            get_weather();
         }
         var address = '';
         if (place.address_components) {
@@ -122,7 +126,6 @@ function initMap() {
         infowindowContent.children['place-icon'].src = place.icon;
         infowindowContent.children['place-name'].textContent = place.name;
         infowindowContent.children['place-address'].textContent = address;
-        get_weather();
     });
 }
 // Gets the weather from the 3 APIs and fills out the data onto the datapage
@@ -306,7 +309,7 @@ function weatherHandler(arrDS,arrOWM,arrAX,daily){
     }
     else if(daily){
         for(i = 0; i < agg_forecast.day.len; i++){
-            final_temp.push([((parseInt(arrDS[i][0])+parseInt(arrOWM[i][0])+parseInt(arrAX[i][0]))/3.0).toFixed(1),((parseInt(arrDS[i][1])+parseInt(arrOWM[i][1])+parseInt(arrAX[i][1]))/3.0).toFixed(1)]);
+            final_temp.push([parseInt(((parseInt(arrDS[i][0])+parseInt(arrOWM[i][0])+parseInt(arrAX[i][0]))/3.0)),parseInt(((parseInt(arrDS[i][1])+parseInt(arrOWM[i][1])+parseInt(arrAX[i][1]))/3.0))]);
         }
     }
     return final_temp;
@@ -376,14 +379,18 @@ function write_to_page(){
     for(i = 0; i < agg_forecast.hour.len; i++){
         document.getElementById("hourly_temp"+i.toString()).innerHTML = agg_forecast.hour.weather[i].toString() + "&#x2109";
         document.getElementById("hourly_img"+i.toString()).src = `${weather_icons[agg_forecast.hour.symbol[i]]}`;
-        let temp_time = parseInt(new Date(agg_forecast.current.time).getHours()) + i;
-        document.getElementById("hourly_time"+i.toString()).innerHTML =  (temp_time%12).toString() + (parseInt(temp_time/12) ? "PM":"AM");
+        let temp_time = (parseInt(new Date(agg_forecast.current.time).getHours()) + i) % 24;
+        document.getElementById("hourly_time"+i.toString()).innerHTML =  (parseInt(temp_time%12) ? (temp_time%12).toString():"12") + (parseInt(temp_time/12) ? "PM":"AM");
     }
     for(j = 0; j < agg_forecast.day.len; j++){
         document.getElementById("day_temp"+j.toString()).innerHTML = agg_forecast.day.weather[j][0].toString() + "/" + agg_forecast.day.weather[j][1].toString() + "&#x2109";
+        document.getElementById("day_img"+j.toString()).src = `${weather_icons[agg_forecast.day.symbol[j]]}`;
         document.getElementById("day_date"+j.toString()).innerHTML = get_date(new Date(agg_forecast.current.time + (j*86000*1000)));
     }
 
+    document.getElementById("location_text").innerHTML = agg_forecast.current.location;
+    document.getElementById("today_name_text").innerHTML = new Date(agg_forecast.current.time).toString();
+    document.getElementById("weather_icon_img").src = `${weather_icons[agg_forecast.hour.symbol[0]]}`;
     document.getElementById("DS_weather").innerHTML = agg_forecast.current.DS + "&#x2109";
     document.getElementById("OWM_weather").innerHTML = agg_forecast.current.OWM + "&#x2109";
     document.getElementById("AX_weather").innerHTML = agg_forecast.current.AX + "&#x2109";
