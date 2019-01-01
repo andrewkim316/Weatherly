@@ -6,5 +6,3 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
             actions: [new chrome.declarativeContent.ShowPageAction()]
     }]);
 });
-
-//chrome.pageAction

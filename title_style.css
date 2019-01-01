@@ -1,26 +1,34 @@
 /*
     Definitions and variables for the whole app
 */
+
 html{
-    height: 400px;
+    height: 500px;
     width: var(--element_width);
     margin: 0;
     padding: 0;
     font-family: Fjord One;
+    background-image: url("https://s3.amazonaws.com/weatherly-images/IMG_0750.JPG");
+    background-size: auto 600px;
+    background-repeat: no-repeat;
+    border: solid 3px;
 }
 :root{
     --secondRow_height: 175px;
     --weatherBlock_width: 100px;
     --shadowing: inset 0 0 10px #000000;
-    --element_width: 500px;
+    --element_width: 600px;
 }
 html::-webkit-scrollbar{
     display:none;
 }
 
+/* --------------------------------------------------------------------------- */
+
 /*
     Classes
 */
+
 /* Container for the whole top banner and subsequent sub-blocks*/
 .today_banner{
     display:flex;
@@ -32,11 +40,14 @@ html::-webkit-scrollbar{
     font-size:15px;
 }
 .API_data{
+    display: -webkit-flex;
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .API_blocks{
     padding: 0px 10px 0px 10px;
-    width:70px;
+    width:100px;
     text-align: center;
     top:0%;
 }
@@ -76,7 +87,7 @@ html::-webkit-scrollbar{
     overflow:scroll;
     overflow-y:hidden;
     height: var(--secondRow_height);
-    width: 350px;
+    width: 400px;
     display:flex;
     box-shadow:var(--shadowing);
 }
@@ -88,9 +99,12 @@ html::-webkit-scrollbar{
 /* Container of the date blocks and subsequent sub-blocks */
 .date_blocks{
     display:flex;
-    height: calc(var(--secondRow_height) /  5);
-    width: calc(var(--element_width)-350px);
-    border-bottom:solid;
+    height: 33px;
+    width: calc(var(--element_width)-352px);
+    border: solid 1px;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
 }
 .date_selection{
     height: var(--secondRow_height);
@@ -102,10 +116,19 @@ html::-webkit-scrollbar{
     text-align: center;
     width: 75px;
 }
+.dateSelection_img{
+    width: 75px;
+    height: 33px;
+    text-align: center;
+}
 .dateSelection_info{
     font-size: 13px;
-    text-align: right;
+    text-align: center;
     width: 75px;
+}
+.dateSelection_img_icon{
+    width: 30px;
+    height: 30px;
 }
 /* Definitions for the title screen block */
 .pac-card {
@@ -115,12 +138,14 @@ html::-webkit-scrollbar{
     transform: translate(-50%, -50%);
     box-sizing: border-box;
     -moz-box-sizing: border-box;
-    font-family: Fjord One;
 }
+
+/* --------------------------------------------------------------------------- */
 
 /* 
     IDs
 */
+
 /* Text of the combined weather forecast, or the presented main forecast */
 #combined_weather_weather{
     font-size: 40px;
@@ -132,8 +157,8 @@ html::-webkit-scrollbar{
 }
 /* Main icon image */
 #weather_icon_img{
-    height: 150px;
-    width: 150px;
+    height: 170px;
+    width: auto;
     padding: 20px;
 }
 /* Scrollbar for the bottom left hourly data */
@@ -170,5 +195,18 @@ html::-webkit-scrollbar{
     text-align: center;
     font-size: 48px;
     font-weight: 100;
-    font-family: Fjord One;
+}
+#logo{
+    font-size: 15px;
+    text-align: left;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    height:25px;
+    width: var(--element_width);
+    font-weight: bold;
+}
+#location{
+    font-size: 20px;
+    text-align: center;
 }
