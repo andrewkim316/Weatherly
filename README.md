@@ -1,2 +1,2 @@
 # Weatherly
-Weather app that grabs weather from 3 sources and combines that into one number.
+Weather app that grabs weather data from three APIs and renders the data into one cohesive forecast
