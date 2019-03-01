@@ -64,9 +64,9 @@ var forecast = {
     },
 }
 /* API keys for the 3 APIs */
-var weather_key_DS = "ff6d13b6d6cee611e239f461eb2736ae";
-var weather_key_OWM = "5fbbd0cd9f2f29b404271d70b5214dc9";
-var weather_key_AX = "818262a4594b42b4b6775243182011";
+var weather_key_DS = config.DS_key;
+var weather_key_OWM = config.OWM_key;
+var weather_key_AX = config.AX_key;
 
 /* --------------------------------------------------------------------------- */
 
